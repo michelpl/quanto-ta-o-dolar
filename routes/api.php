@@ -13,6 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});*/
+
+
+Route::prefix('/')->group(function () {
+    Route::prefix('price')->group(function () {
+        Route::get('/', 'API\PriceController@index');
+        Route::get('/buy/{city}/{value}', 'API\PriceController@buyByCity');
+    });
 });

@@ -21,6 +21,6 @@ use Illuminate\Http\Request;
 Route::prefix('/')->group(function () {
     Route::prefix('price')->group(function () {
         Route::get('/', 'API\PriceController@index');
-        Route::get('/buy/{city}/{value}', 'API\PriceController@buyByCity');
+        Route::get('/buy/{city}/{amountToBuy}', 'API\PriceController@buyByCity');
     });
 });

@@ -9,17 +9,21 @@ class MelhorCambio extends Model
 {
     private $url = 'https://www.melhorcambio.com/cotacao/%s/dolar-turismo/%s';
 
-    public function getBuyPrice(string $city, float $value)
+    public function getBuyPrice(string $city)
     {
-        $url = sprintf($this->url, 'compra', $city);
+        try {
+            $url = sprintf($this->url, 'compra', $city);
 
-        $client = new GuzzleHttp\Client();
-        $res = $client->request('GET', $url);
-        if ($res->getStatusCode()) {
-            return $this->splitHtml($res->getBody());
+            $client = new GuzzleHttp\Client();
+            $res = $client->request('GET', $url);
+            if ($res->getStatusCode()) {
+                return $this->splitHtml($res->getBody());
+            }
+            return false;
+
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
-
-        return false;
     }
 
     private function splitHtml($html)

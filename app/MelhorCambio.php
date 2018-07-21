@@ -36,7 +36,7 @@ class MelhorCambio extends Model
             if (!empty($inputValue[1])) {
                 $price = str_replace('value=', '', $inputValue[1]);
 
-                return str_replace(',', '.', $price);
+                return (float) str_replace(',', '.', $price);
             }
         }
 

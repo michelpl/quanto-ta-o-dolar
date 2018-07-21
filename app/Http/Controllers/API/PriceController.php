@@ -5,7 +5,8 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\MelhorCambio;
-use App\Http\Controllers\API\PriceRulesController;
+use Telegram\Bot\Api;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class PriceController extends Controller
 {
@@ -61,7 +62,18 @@ class PriceController extends Controller
 
         $priceRules = new PriceRulesController();
 
-        return $priceRules->getLowerPrice($originalPrice, $amountToBuy);
+        $resonse = [
+            'amout_to_buy'
+                => $amountToBuy,
+            'original_price'
+                => $originalPrice,
+            'lower_price'
+                =>
+                $priceRules->getLowerPrice((float) $originalPrice, $amountToBuy)
+
+        ];
+
+        return $resonse;
     }
 
     /**

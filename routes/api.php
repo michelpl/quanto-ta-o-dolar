@@ -25,9 +25,4 @@ Route::prefix('/')->group(function () {
     });
 
     Route::apiResource('/alert', 'API\AlertController');
-
-    /*Route::prefix('alert')->group(function () {
-        Route::get('/', 'API\AlertController@index');
-
-    });*/
 });

@@ -15,7 +15,8 @@ class CreateAlertsTable extends Migration
     {
         Schema::create('alerts', function (Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->string('email');
+            $table->integer('user_id');
+            $table->string('email')->nullable();
             $table->decimal('required_price');
             $table->decimal('current_price');
             $table->boolean('status');

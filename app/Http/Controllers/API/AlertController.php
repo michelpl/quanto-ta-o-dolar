@@ -27,9 +27,14 @@ class AlertController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($userId, $requiredPrice, $currentPrice, $email ='')
     {
-        //
+        $this->alert->user_id = $userId;
+        $this->alert->required_price = $requiredPrice;
+        $this->alert->current_price = $currentPrice;
+        $this->alert->email = $email;
+        $this->alert->status = 1;
+        $this->alert->save();
     }
     /**
      * Store a newly created resource in storage.

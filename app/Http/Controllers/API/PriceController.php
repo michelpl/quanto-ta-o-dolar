@@ -5,8 +5,6 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\MelhorCambio;
-use Telegram\Bot\Api;
-use Telegram\Bot\Laravel\Facades\Telegram;
 
 class PriceController extends Controller
 {
@@ -69,8 +67,10 @@ class PriceController extends Controller
                 => $originalPrice,
             'lower_price'
                 =>
-                $priceRules->getLowerPrice((float) $originalPrice, $amountToBuy)
-
+                $priceRules->getLowerPrice((float) $originalPrice, $amountToBuy),
+            'date_time'
+                =>
+                date('d-m-Y H:i:s')
         ];
 
         return $resonse;

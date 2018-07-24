@@ -24,5 +24,10 @@ Route::prefix('/')->group(function () {
         Route::get('/buy/{city}/{amountToBuy}', 'API\PriceController@buyByCity');
     });
 
+    Route::prefix('webhook')->group(function () {
+        Route::get('/', 'API\WebhookController@index');
+        Route::post('/bot', 'API\WebhookController@bot');
+    });
+
     Route::apiResource('/alert', 'API\AlertController');
 });

@@ -4,11 +4,10 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Telegram\Bot\Api;
-use Telegram\Bot\Laravel\Facades\Telegram;
 use App\BotUser;
 use App\BotCommandList;
 use App\BotCommands;
+use App\Telegram;
 
 class WebhookController extends Controller
 {
@@ -60,48 +59,41 @@ class WebhookController extends Controller
     private function executeBotCommand($text, $userId)
     {
         $city = 'rio-de-janeiro';
-        $value = 500;
+        $requiredAmount = 500;
         $requiredPrice = 3.85;
-
 
         $command = array_search($text, BotCommandList::$COMMANDS);
         $botCommands = new BotCommands();
+        $message = BotCommandList::$COMMAND_NOT_FOUND;
 
         if ($command) {
-
             switch ($command)
             {
                 case 'howMuchIsDolar' :
-                    $message = $botCommands->howMuchIsDolar($city, $value);
+                    $message = $botCommands
+                        ->howMuchIsDolar(
+                            $city,
+                            $requiredAmount
+                        );
                     break;
                 case 'createPriceAlert' :
                     $message = $botCommands->createPriceAlert(
                         $userId,
                         $requiredPrice,
                         $city,
-                        $value
+                        $requiredAmount
                     );
                     break;
             }
-
-
-
-            return $message;
         }
 
-        return '';
+        return $message;
     }
 
     private function sendMessage($message, $chatId)
     {
-        $telegram = new Api(config('telegram.bot_token'));
-        return $telegram->sendMessage(
-            ['chat_id'=> $chatId, 'text' => $message]
-        );
-
-        /*$botId = $response->getId();
-        $firstName = $response->getFirstName();
-        $username = $response->getUsername();*/
+        $telegram = new Telegram();
+        $telegram->sendMessage($chatId, $message);
     }
 
     private function saveBotUser($message)

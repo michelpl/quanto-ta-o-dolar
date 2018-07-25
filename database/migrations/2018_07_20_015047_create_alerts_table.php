@@ -17,6 +17,8 @@ class CreateAlertsTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('user_id');
             $table->string('email')->nullable();
+            $table->string('city');
+            $table->decimal('required_amount');
             $table->decimal('required_price');
             $table->decimal('current_price');
             $table->boolean('status');

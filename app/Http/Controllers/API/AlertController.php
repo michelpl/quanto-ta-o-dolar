@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Alert;
+use App\BotUser;
+use App\Telegram;
 
 class AlertController extends Controller
 {
@@ -22,20 +24,7 @@ class AlertController extends Controller
     {
         return $this->alert->all();
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create($userId, $requiredPrice, $currentPrice, $email ='')
-    {
-        $this->alert->user_id = $userId;
-        $this->alert->required_price = $requiredPrice;
-        $this->alert->current_price = $currentPrice;
-        $this->alert->email = $email;
-        $this->alert->status = 1;
-        $this->alert->save();
-    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -48,26 +37,16 @@ class AlertController extends Controller
         $this->alert->save();
         return response($this->alert, 201);
     }
+
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param $alertId
+     * @return mixed
      */
     public function show($alertId)
     {
         return $this->alert->find($alertId);
     }
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Alert $alert)
-    {
-        //
-    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -82,14 +61,67 @@ class AlertController extends Controller
         $this->alert->save();
         return response($this->alert, 200);
     }
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * Check all alerts
      */
-    public function destroy(Alert $alert)
+    public function trigger()
     {
-        //
+        $alerts = $this->alert->all()->where('status', 1);
+        $cities = $alerts->groupBy('city');
+        $alertsToTrigger = [];
+        $messageTriggered = [];
+
+        foreach ($cities as $city => $alerts) {
+            $alertsToTrigger[] = $this->checkAlert($city, $alerts);
+        }
+
+        foreach ($alertsToTrigger as $alertToTrigger) {
+            if ($alertsToTrigger) {
+                $messageTriggered[] = $this->sendMessage($alertToTrigger);
+            }
+        }
+
+        return $messageTriggered;
+    }
+
+    protected function checkAlert($city, $alerts)
+    {
+        $priceController = new PriceController();
+        $currentprice = $priceController->buyByCity($city)['original_price'];
+
+        foreach ($alerts as $alert) {
+            if ($currentprice <= $alert['required_price']) {
+                $alert['current_price'] = $currentprice;
+                return $alert;
+            }
+        }
+
+        return false;
+    }
+
+    protected function sendMessage($alert)
+    {
+        if (!empty($alert['user_id'])) {
+            $botUser = new BotUser();
+            $user = $botUser->find($alert['user_id']);
+
+            $message =
+                "Alerta de preço atingido! \n" .
+                "Valor requerido R$" .
+                $alert['required_price'] . "\n" .
+                "Preço atual R$" . $alert['current_price'] . " para " .
+                $alert['city']
+                ;
+
+            try{
+                $telegram = new Telegram();
+                $telegram->sendMessage($user['chat_id'], $message);
+                return $message;
+                //@todo desabilitar alerta se atingir o preço
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        }
     }
 }

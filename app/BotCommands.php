@@ -18,20 +18,22 @@ class BotCommands extends Model
         return $message;
     }
 
-    public function createPriceAlert($userId, $requiredPrice, $city, $amountToBuy)
+    public function createPriceAlert($userId, $requiredPrice, $city, $requiredAmount)
     {
         $priceController = new PriceController();
         $alert = new AlertModel();
 
-        $currentPrice = $priceController->buyByCity($city, $amountToBuy);
+        $currentPrice = $priceController->buyByCity($city, $requiredAmount);
 
         $alert->user_id = $userId;
+        $alert->city = $city;
+        $alert->required_amount = $requiredAmount;
         $alert->required_price = $requiredPrice;
         $alert->current_price = $currentPrice['lower_price'];
         $alert->status = 1;
         $alert->save();
 
-        return $this->messageCreateAlert($requiredPrice, $city, $amountToBuy);
+        return $this->messageCreateAlert($requiredPrice, $city, $requiredAmount);
     }
 
     protected function messageHowMuch($price, $city)
@@ -47,10 +49,10 @@ class BotCommands extends Model
         ;
     }
 
-    protected function messageCreateAlert($requiredPrice, $city, $amountToBuy)
+    protected function messageCreateAlert($requiredPrice, $city, $requiredAmount)
     {
         return
-            'Alerta criado para compra de $' . $amountToBuy . '.00 na cidade ' .
+            'Alerta criado para compra de $' . $requiredAmount . '.00 na cidade ' .
             $city . ' quando o dolar chegar a R$' . $requiredPrice;
         ;
     }

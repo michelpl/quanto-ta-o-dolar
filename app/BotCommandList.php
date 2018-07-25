@@ -8,9 +8,10 @@ class BotCommandList extends Model
 {
     public static $HELP =
         "
-            Digite 'Criar alerta de preço para R$(preço em reais)' 
+            Digite **Criar alerta de preço** para R$(preço em reais)' 
             para criar um alerta com o preço que você busca\n
-            Digite 'Quanto tá o dólar?' para verificar o preço do dólar no momento
+            Digite **Quanto tá o dólar?** para verificar o preço do dólar no 
+            momento
         "
     ;
     public static $COMMANDS =[
@@ -19,5 +20,7 @@ class BotCommandList extends Model
         'howMuchIsDolar' => 'Quanto tá o dólar?'
     ];
 
-    public static $COMMAND_NOT_FOUND = 'Comando não encontrado';
+    public static $COMMAND_NOT_FOUND =
+        "Comando não encontrado \n 
+        Envie **Help** para ver a lista com  os comandos";
 }

@@ -49,7 +49,7 @@ class PriceController extends Controller
      * @param  int $amountToBuy Value to buy (only int > 100 allowed)
      * @return \Illuminate\Http\Response
      */
-    public function buyByCity(string $city, int $amountToBuy)
+    public function buyByCity(string $city, int $amountToBuy = 100)
     {
         if ($amountToBuy < 100) {
             return self::$MINIMUM_VALUE_MSG;

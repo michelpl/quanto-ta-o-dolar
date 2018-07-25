@@ -30,4 +30,6 @@ Route::prefix('/')->group(function () {
     });
 
     Route::apiResource('/alert', 'API\AlertController');
+
+    Route::get('/cron/alert', 'API\AlertController@trigger');
 });

@@ -27,6 +27,7 @@ Route::prefix('/')->group(function () {
     Route::prefix('webhook')->group(function () {
         Route::get('/', 'API\WebhookController@index');
         Route::post('/bot', 'API\WebhookController@bot');
+        Route::post('/check', 'API\WebhookController@check');
     });
 
     Route::apiResource('/alert', 'API\AlertController');

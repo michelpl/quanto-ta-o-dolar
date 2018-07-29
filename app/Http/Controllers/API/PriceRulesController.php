@@ -10,7 +10,7 @@ class PriceRulesController extends Controller
 
     public function getLowerPrice(float $originalPrice, int $amountToBuy)
     {
-        $lowerPrice = $originalPrice - 0.01;
+        $lowerPrice = $originalPrice;
 
         if ($amountToBuy >= 10000) {
             $lowerPrice = $originalPrice - 0.05;
@@ -24,4 +24,12 @@ class PriceRulesController extends Controller
 
         return number_format($lowerPrice, 2);
     }
+
+    public static $values = [
+        'R$100,00' => 100,
+        'R$400,00 ou mais' => 400,
+        'R$900,00 ou mais' => 900,
+        'R$2000,00 ou mais' => 2000,
+        'R$10000,00 ou mais' => 10000
+    ];
 }

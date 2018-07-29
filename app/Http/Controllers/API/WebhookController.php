@@ -8,6 +8,8 @@ use App\BotUser;
 use App\BotCommandList;
 use App\BotCommands;
 use App\Telegram;
+use Accentuation\Accentuation;
+use App\MessageHistory;
 
 class WebhookController extends Controller
 {
@@ -15,11 +17,6 @@ class WebhookController extends Controller
 
     public function __construct(BotUser $botUser) {
         $this->botUser = $botUser;
-    }
-
-    public function index()
-    {
-        //
     }
 
     public function bot(Request $request)
@@ -43,57 +40,35 @@ class WebhookController extends Controller
 
             } elseif ($request->message['text']) {
                 $message = $this->executeBotCommand(
-                    $request->message['text'],
-                    $request->message['from']['id']
+                    $request->message,
+                    $request->message['chat']['id']
                 );
-            }
-
-            if (strlen($message) > 0) {
-                $this->sendMessage($message, $request->message['chat']['id']);
             }
 
             return $message;
         }
     }
 
-    private function executeBotCommand($text, $userId)
+    private function executeBotCommand($message, $chatId)
     {
-        $city = 'rio-de-janeiro';
-        $requiredAmount = 500;
-        $requiredPrice = 3.85;
-
-        $command = array_search($text, BotCommandList::$COMMANDS);
         $botCommands = new BotCommands();
-        $message = BotCommandList::$COMMAND_NOT_FOUND;
 
-        if ($command) {
-            switch ($command)
-            {
-                case 'howMuchIsDolar' :
-                    $message = $botCommands
-                        ->howMuchIsDolar(
-                            $city,
-                            $requiredAmount
-                        );
-                    break;
-                case 'createPriceAlert' :
-                    $message = $botCommands->createPriceAlert(
-                        $userId,
-                        $requiredPrice,
-                        $city,
-                        $requiredAmount
-                    );
-                    break;
-            }
+        $text = Accentuation::remove($message['text']);
+        $text = strtolower(str_replace('?', '', $text));
+
+        $mainCommand = array_search($text, BotCommandList::$COMMANDS);
+
+        if ($mainCommand) {
+            $this->disableMessageHistoryFromUser($chatId);
+            return $botCommands->$mainCommand($chatId, $text);
         }
 
-        return $message;
-    }
+        $command = $this->getActiveMessageHistoryFromUser($chatId);
+        $nextCommand = $command['nextCommand'];
 
-    private function sendMessage($message, $chatId)
-    {
-        $telegram = new Telegram();
-        $telegram->sendMessage($chatId, $message);
+        $message = $botCommands->$nextCommand($chatId, $text);
+
+        return $message;
     }
 
     private function saveBotUser($message)
@@ -113,5 +88,29 @@ class WebhookController extends Controller
     private function getCommandList()
     {
         return BotCommandList::$HELP;
+    }
+
+    public function check(Request $request)
+    {
+        return $request;
+    }
+
+    private function disableMessageHistoryFromUser($chatId)
+    {
+        $messageHistory = new MessageHistory();
+        $messageHistory
+            ->where('chat_id', $chatId)
+            ->update(['status' => 0]);
+    }
+
+    private function getActiveMessageHistoryFromUser($chatId)
+    {
+        $messageHistory = new MessageHistory();
+        return
+            $messageHistory
+            ->where([
+                ['chat_id', $chatId],
+                ['status', 1]
+            ])->first();
     }
 }

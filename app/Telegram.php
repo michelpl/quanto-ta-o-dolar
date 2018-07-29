@@ -5,11 +5,30 @@ use Telegram\Bot\Api;
 
 class Telegram
 {
-    public function sendMessage($chatId, $message)
+    private $telegram;
+
+    public function __construct()
     {
-        $telegram = new Api(config('telegram.bot_token'));
-        return $telegram->sendMessage(
-            ['chat_id'=> $chatId, 'text' => $message]
-        );
+        $this->telegram = new Api(config('telegram.bot_token'));
+    }
+
+    public function sendMessage($chatId, $message, $keyboard = null)
+    {
+        $params = [
+            'chat_id' => $chatId,
+            'text' => $message,
+        ];
+
+        if ($keyboard) {
+            $reply_markup = $this->telegram->replyKeyboardMarkup([
+                'keyboard' => $keyboard,
+                'resize_keyboard' => true,
+                'one_time_keyboard' => true
+            ]);
+
+            $params['reply_markup'] = $reply_markup;
+        }
+
+        $this->telegram->sendMessage($params);
     }
 }

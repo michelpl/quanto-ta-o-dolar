@@ -11,7 +11,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "irazasyed/telegram-bot-sdk": "^2.0",
         "laravel/framework": "5.6.*",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "reisraff/accentuation" : ">=2.0.2"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

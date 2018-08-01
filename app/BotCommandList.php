@@ -13,11 +13,19 @@ class BotCommandList extends Model
     ;
     public static $COMMANDS =[
         'deletePriceAlert' => 'excluir alerta de preço',
-        'createPriceAlert' => 'criar alerta de preço',
+        'createPriceAlert' => 'criar alerta de preco',
         'howMuchIsDollar' => 'quanto ta o dolar',
         'help' => 'help',
+        'start' => 'start',
+        'cancel' => 'cancelar'
+    ];
+
+    public static $HELP_COMMANDS =[
+        'createPriceAlert' => 'Criar alerta de preço',
+        'howMuchIsDollar' => 'Quanto tá o dolar?',
+        'help' => 'Help',
         'start' => '/start',
-        'disableMessageHistory' => 'cancelar'
+        'cancel' => 'Cancelar'
     ];
 
     public static $COMMAND_NOT_FOUND =

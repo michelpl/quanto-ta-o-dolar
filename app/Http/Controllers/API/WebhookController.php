@@ -7,16 +7,16 @@ use App\Http\Controllers\Controller;
 use App\BotUser;
 use App\BotCommandList;
 use App\BotCommands;
-use App\Telegram;
 use Accentuation\Accentuation;
-use App\MessageHistory;
 
 class WebhookController extends Controller
 {
     protected $botUser;
+    protected $botCommands;
 
     public function __construct(BotUser $botUser) {
         $this->botUser = $botUser;
+        $this->botCommands = new BotCommands();
     }
 
     public function bot(Request $request)
@@ -29,16 +29,7 @@ class WebhookController extends Controller
                $this->saveBotUser($request->message);
             }
 
-            if (
-                !empty($request->message['text']) &&
-                (
-                    strtolower($request->message['text']) === '/start' ||
-                    strtolower($request->message['text']) === 'help'
-                )
-            ) {
-                $message = $this->getCommandList();
-
-            } elseif ($request->message['text']) {
+            if ($request->message['text']) {
                 $message = $this->executeBotCommand(
                     $request->message,
                     $request->message['chat']['id']
@@ -51,24 +42,50 @@ class WebhookController extends Controller
 
     private function executeBotCommand($message, $chatId)
     {
-        $botCommands = new BotCommands();
+        $botCommands = $this->botCommands;
 
         $text = Accentuation::remove($message['text']);
         $text = strtolower(str_replace('?', '', $text));
+        $text = strtolower(str_replace('/', '', $text));
+        $response = BotCommandList::$COMMAND_NOT_FOUND;
 
         $mainCommand = array_search($text, BotCommandList::$COMMANDS);
+        $messageHistory = new MessageHistoryController();
 
         if ($mainCommand) {
-            $this->disableMessageHistoryFromUser($chatId);
+            $messageHistory->disableAllFromUser($chatId);
             return $botCommands->$mainCommand($chatId, $text);
         }
 
-        $command = $this->getActiveMessageHistoryFromUser($chatId);
-        $nextCommand = $command['nextCommand'];
+        $command = $messageHistory->getActiveMessageHistoryFromUser($chatId);
 
-        $message = $botCommands->$nextCommand($chatId, $text);
+        if (!empty($command['steps'])) {
+            return $this->executeCommand($command, $chatId, $text);
+        }
 
-        return $message;
+        $botCommands->sendMessage($response, $chatId);
+        return $response;
+    }
+
+    private function executeCommand($command, $chatId, $text)
+    {
+        $botCommands = $this->botCommands;
+        $steps = explode(',', $command['steps']);
+        $stepIndex = $command['next_step_index']+1;
+        if (
+            !empty($steps[$stepIndex]) &&
+            method_exists($botCommands, $steps[$stepIndex])
+        ) {
+            $nextCommand = $steps[$stepIndex];
+
+            return
+                $botCommands->$nextCommand(
+                    $chatId,
+                    $text,
+                    implode(',', $steps),
+                    $stepIndex
+                );
+        }
     }
 
     private function saveBotUser($message)
@@ -85,32 +102,8 @@ class WebhookController extends Controller
         $this->botUser->save();
     }
 
-    private function getCommandList()
-    {
-        return BotCommandList::$HELP;
-    }
-
     public function check(Request $request)
     {
         return $request;
-    }
-
-    private function disableMessageHistoryFromUser($chatId)
-    {
-        $messageHistory = new MessageHistory();
-        $messageHistory
-            ->where('chat_id', $chatId)
-            ->update(['status' => 0]);
-    }
-
-    private function getActiveMessageHistoryFromUser($chatId)
-    {
-        $messageHistory = new MessageHistory();
-        return
-            $messageHistory
-            ->where([
-                ['chat_id', $chatId],
-                ['status', 1]
-            ])->first();
     }
 }

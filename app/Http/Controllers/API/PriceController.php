@@ -11,38 +11,6 @@ class PriceController extends Controller
     private static $MINIMUM_VALUE_MSG = 'Insira um valor inteiro maior que R$100.00';
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     */
-    public function show($id)
-    {
-
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  string  $city

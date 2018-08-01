@@ -17,7 +17,8 @@ class CreateMessageHistoriesTable extends Migration
             $table->increments('id')->unsigned();
             $table->integer('chat_id');
             $table->string('command');
-            $table->string('nextCommand');
+            $table->string('steps');
+            $table->integer('next_step_index');
             $table->string('message');
             $table->boolean('status');
             $table->timestamps();

@@ -15,7 +15,7 @@ class CreateAlertsTable extends Migration
     {
         Schema::create('alerts', function (Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->integer('user_id');
+            $table->integer('chat_id');
             $table->string('email')->nullable();
             $table->string('city');
             $table->decimal('required_amount');

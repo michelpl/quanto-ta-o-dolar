@@ -18,7 +18,7 @@ class CreateBotUsersTable extends Migration
             $table->integer('chat_id')->unique();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('username')->unique();
+            $table->string('username')->unique()->nullable();
             $table->boolean('is_bot');
             $table->string('email')->unique()->nullable();
             $table->boolean('status');

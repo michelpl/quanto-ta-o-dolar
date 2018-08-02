@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\MessageHistory;
+use App\MessageHistory as MessageHistory;
 use App\Http\Controllers\Controller;
 
 class MessageHistoryController extends Controller

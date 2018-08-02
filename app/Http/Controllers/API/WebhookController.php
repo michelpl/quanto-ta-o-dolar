@@ -25,6 +25,10 @@ class WebhookController extends Controller
 
             $message = '';
 
+            if (!isset($request->message['chat']['id'])) {
+                return false;
+            }
+
             if (!$this->botUser->find($request->message['from']['id'])) {
                $this->saveBotUser($request->message);
             }
@@ -93,11 +97,16 @@ class WebhookController extends Controller
         $this->botUser->id = $message['from']['id'];
         $this->botUser->chat_id = $message['chat']['id'];
         $this->botUser->first_name = $message['from']['first_name'];
-        $this->botUser->last_name = $message['from']['last_name'];
-        $this->botUser->username = $message['from']['username'];
         $this->botUser->is_bot = $message['from']['is_bot'];
         $this->botUser->email = null;
         $this->botUser->status = 1;
+
+        if (isset($message['from']['last_name'])) {
+            $this->botUser->last_name = $message['from']['last_name'];
+        }
+        if (isset($message['from']['username'])) {
+            $this->botUser->last_name = $message['from']['username'];
+        }
 
         $this->botUser->save();
     }

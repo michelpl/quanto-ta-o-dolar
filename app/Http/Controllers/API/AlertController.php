@@ -62,6 +62,13 @@ class AlertController extends Controller
         return response($this->alert, 200);
     }
 
+    private function disable(int $alertId)
+    {
+        $alert = $this->alert->find($alertId);
+        $alert->status = 0;
+        $alert->save();
+    }
+
     /**
      * Check all alerts
      */
@@ -102,10 +109,7 @@ class AlertController extends Controller
 
     protected function sendMessage($alert)
     {
-        if (!empty($alert['user_id'])) {
-            $botUser = new BotUser();
-            $user = $botUser->find($alert['user_id']);
-
+        if (!empty($alert['chat_id'])) {
             $message =
                 "Alerta de preço atingido! \n" .
                 "Valor requerido R$" .
@@ -116,9 +120,10 @@ class AlertController extends Controller
 
             try{
                 $telegram = new Telegram();
-                $telegram->sendMessage($user['chat_id'], $message);
-                return $message;
+                $telegram->sendMessage($alert['chat_id'], $message);
                 //@todo desabilitar alerta se atingir o preço
+                $this->disable($alert['id']);
+                return $message;
             } catch (\Exception $e) {
                 return $e->getMessage();
             }

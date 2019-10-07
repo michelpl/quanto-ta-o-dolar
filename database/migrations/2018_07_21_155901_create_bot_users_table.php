@@ -16,6 +16,7 @@ class CreateBotUsersTable extends Migration
         Schema::create('bot_users', function (Blueprint $table) {
             $table->integer('id')->unique();
             $table->integer('chat_id')->unique();
+            $table->integer('message_id')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('username')->unique()->nullable();

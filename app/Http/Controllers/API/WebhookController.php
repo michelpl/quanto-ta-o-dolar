@@ -96,6 +96,7 @@ class WebhookController extends Controller
     {
         $this->botUser->id = $message['from']['id'];
         $this->botUser->chat_id = $message['chat']['id'];
+        $this->botUser->message_id = $message['message_id'];
         $this->botUser->first_name = $message['from']['first_name'];
         $this->botUser->is_bot = $message['from']['is_bot'];
         $this->botUser->email = null;

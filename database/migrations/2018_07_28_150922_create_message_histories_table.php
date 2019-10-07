@@ -16,6 +16,7 @@ class CreateMessageHistoriesTable extends Migration
         Schema::create('message_histories', function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->integer('chat_id');
+            $table->integer('message_id')->nullable();
             $table->string('command');
             $table->string('steps');
             $table->integer('next_step_index');

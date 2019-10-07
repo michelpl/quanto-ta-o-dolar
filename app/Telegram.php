@@ -12,11 +12,12 @@ class Telegram
         $this->telegram = new Api(config('telegram.bot_token'));
     }
 
-    public function sendMessage($chatId, $message, $keyboard = null)
+    public function sendMessage($chatId, $message, $keyboard = null, $messageId = null)
     {
         $params = [
             'chat_id' => $chatId,
             'text' => $message,
+            'reply_to_message_id' => $messageId
         ];
 
         if ($keyboard) {

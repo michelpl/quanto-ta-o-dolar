@@ -9,6 +9,7 @@ class BotUser extends Model
     protected $fillable = [
         'id',
         'chat_id',
+        'message_id',
         'first_name',
         'last_nale',
         'username',

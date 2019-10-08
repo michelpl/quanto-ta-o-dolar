@@ -271,7 +271,7 @@ class BotCommands extends Model
             ' na cidade ' .
             City::$CITIES[$city][0] .
             ' quando o dolar chegar a R$' .
-            $requiredPrice;
+            number_format($requiredPrice, '2', ',', '.')
         ;
     }
 
@@ -328,7 +328,7 @@ class BotCommands extends Model
 
     protected function fromCurrencyToFLoat($text)
     {
-        $amount = str_replace('r$', '', $text);
+        $amount = str_replace('$', '', $text);
         return (float) str_replace(',', '.', $amount);
     }
 }

@@ -110,12 +110,16 @@ class AlertController extends Controller
     protected function sendMessage($alert)
     {
         if (!empty($alert['chat_id'])) {
+
+            $city  = ucfirst(str_replace('-', ' ', $alert['city']));
+            $currentPrice = number_format($alert['current_price'], 2, ',', '.');
+
             $message =
                 "Alerta de preço atingido! \n" .
                 "Valor requerido R$" .
                 $alert['required_price'] . "\n" .
-                "Preço atual R$" . $alert['current_price'] . " para " .
-                $alert['city']
+                "Preço atual R$" . $currentPrice . " para " .
+                $city
                 ;
 
             try{

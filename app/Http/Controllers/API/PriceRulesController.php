@@ -26,10 +26,10 @@ class PriceRulesController extends Controller
     }
 
     public static $values = [
-        '$100,00' => 100,
-        '$400,00 ou mais' => 400,
-        '$900,00 ou mais' => 900,
-        '$2000,00 ou mais' => 2000,
-        '$10000,00 ou mais' => 10000
+        '$100.00' => 100,
+        '$400.00 ou mais' => 400,
+        '$900.00 ou mais' => 900,
+        '$2000.00 ou mais' => 2000,
+        '$10000.00 ou mais' => 10000
     ];
 }

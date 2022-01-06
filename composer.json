@@ -10,7 +10,7 @@
         "google/apiclient": "^2.0",
         "guzzlehttp/guzzle": "^6.3",
         "irazasyed/telegram-bot-sdk": "^2.0",
-        "laravel/framework": "5.6.*",
+        "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "reisraff/accentuation" : ">=2.0.2"
     },
